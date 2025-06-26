@@ -18,8 +18,7 @@ os.makedirs(output_dir, exist_ok=True)
 
 try:
     for marker_id in range(num_markers):
-        marker_img = aruco.generateImageMarker(aruco_dict, marker_id, 700) if hasattr(aruco, 'generateImageMarker') \
-            else aruco.drawMarker(aruco_dict, marker_id, 700)
+              marker_img = aruco.drawMarker(aruco_dict, marker_id, 700)
         filepath = os.path.join(output_dir, f"marker_{marker_id}.png")
         cv2.imwrite(filepath, marker_img)
     print(f"Saved {num_markers} markers to {output_dir}")

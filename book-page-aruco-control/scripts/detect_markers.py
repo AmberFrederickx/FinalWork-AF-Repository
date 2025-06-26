@@ -1,6 +1,7 @@
 import cv2
 import json
 import time
+import sys
 
 # Check for aruco availability
 if not hasattr(cv2, 'aruco'):
@@ -13,6 +14,11 @@ dictionary_id = aruco.DICT_6X6_250
 aruco_dict = aruco.getPredefinedDictionary(dictionary_id)
 parameters = aruco.DetectorParameters_create()
 capture = cv2.VideoCapture(0)
+
+if not capture.isOpened():
+    print("Error: Could not access webcam. Is it already in use or missing?")
+    sys.exit(1)
+    
 last_id = None
 
 print("Starting webcam. Press 'q' to quit.")
