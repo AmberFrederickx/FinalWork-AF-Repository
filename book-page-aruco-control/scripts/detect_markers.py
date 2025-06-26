@@ -48,7 +48,7 @@ while True:
             print(f"Detected marker: {detected_id}")
             last_id = detected_id
 
-            with open("../chataigne/trigger.json", "w") as f:
+            with open("book-page-aruco-control/chataigne/trigger.json", "w") as f:
                 json.dump({"marker_id": detected_id}, f)
 
     aruco.drawDetectedMarkers(frame, corners, ids)
