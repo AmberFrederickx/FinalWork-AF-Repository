@@ -13,7 +13,16 @@ from cv2 import aruco
 dictionary_id = aruco.DICT_6X6_250
 aruco_dict = aruco.getPredefinedDictionary(dictionary_id)
 parameters = aruco.DetectorParameters_create()
-capture = cv2.VideoCapture(0)
+for i in range(3):
+    cap = cv2.VideoCapture(i)
+    if cap.isOpened():
+        print(f"Webcam gevonden op index {i}")
+        break
+else:
+    print("Geen werkende webcam gevonden")
+    sys.exit(1)
+
+capture = cap
 
 if not capture.isOpened():
     print("Error: Could not access webcam. Is it already in use or missing?")
