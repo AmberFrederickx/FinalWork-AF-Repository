@@ -1,1 +1,97 @@
-{"marker_id": null}
+# File: book-page-aruco-control/scripts/generate_markers.py
+
+import cv2
+import os
+from pathlib import Path
+
+# Check for aruco availability
+if not hasattr(cv2, 'aruco'):
+    raise ImportError("cv2.aruco module is not available. Please install opencv-contrib-python.")
+
+from cv2 import aruco
+
+# Configuration
+base_dir = Path(__file__).resolve().parent.parent / "book-page-aruco-control"
+output_dir = base_dir / "markers"
+dictionary_id = aruco.DICT_6X6_250
+num_markers = 10
+
+# Create marker images
+aruco_dict = aruco.getPredefinedDictionary(dictionary_id)
+os.makedirs(output_dir, exist_ok=True)
+
+try:
+    for marker_id in range(num_markers):
+        marker_img = aruco.drawMarker(aruco_dict, marker_id, 700)
+        filepath = output_dir / f"marker_{marker_id}.png"
+        cv2.imwrite(str(filepath), marker_img)
+    print(f"Saved {num_markers} markers to {output_dir}")
+except AttributeError as e:
+    print("Failed to generate markers. Your OpenCV version might not support aruco.drawMarker.")
+    print("Please ensure you have opencv-contrib-python installed.")
+    raise e
+
+# File: book-page-aruco-control/scripts/detect_markers.py
+
+import cv2
+import json
+import time
+import sys
+from pathlib import Path
+
+# Check for aruco availability
+if not hasattr(cv2, 'aruco'):
+    raise ImportError("cv2.aruco module is not available. Please install opencv-contrib-python.")
+
+from cv2 import aruco
+
+# Setup
+base_dir = Path(__file__).resolve().parent.parent / "book-page-aruco-control"
+trigger_path = base_dir / "chataigne" / "trigger.json"
+dictionary_id = aruco.DICT_6X6_250
+aruco_dict = aruco.getPredefinedDictionary(dictionary_id)
+parameters = aruco.DetectorParameters_create()
+capture = cv2.VideoCapture(0)
+
+if not capture.isOpened():
+    print("Error: Could not access webcam. Is it already in use or missing?")
+    sys.exit(1)
+
+last_id = None
+
+print("Starting webcam. Press 'q' to quit.")
+
+while True:
+    ret, frame = capture.read()
+    if not ret:
+        continue
+
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    corners, ids, rejected = aruco.detectMarkers(gray, aruco_dict, parameters=parameters)
+
+    if ids is not None:
+        id_list = ids.flatten().tolist()
+        detected_id = id_list[0]  # Simplified: just use first detected marker
+
+        if detected_id != last_id:
+            print(f"Detected marker: {detected_id}")
+            last_id = detected_id
+
+            with open(trigger_path, "w") as f:
+                json.dump({"marker_id": detected_id}, f)
+
+    aruco.drawDetectedMarkers(frame, corners, ids)
+    cv2.imshow("Aruco Detection", frame)
+
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+capture.release()
+cv2.destroyAllWindows()
+
+# File: book-page-aruco-control/requirements.txt
+opencv-contrib-python==4.5.5.62
+
+# File: book-page-aruco-control/chataigne/trigger.json
+
+{"marker_id": -1}
