@@ -1,9 +1,9 @@
 import cv2
-import json
-import time
 import sys
 from pythonosc import udp_client
+import subprocess
 
+# For OSC
 client = udp_client.SimpleUDPClient("127.0.0.1", 5005)
 
 
@@ -49,12 +49,24 @@ while True:
         detected_id = id_list[0]  # Simplified: just use first detected marker
 
         if detected_id != last_id:
-            client.send_message("/marker_id", detected_id)
             print(f"Detected marker: {detected_id}")
+            client.send_message("/marker_id", detected_id)
             last_id = detected_id
 
-            with open("book-page-aruco-control/chataigne/trigger.json", "w") as f:
-                json.dump({"marker_id": detected_id}, f)
+            # Stop precious VLC-instantion
+            subprocess.call(["pkill", "-f", "VLC"])
+            
+            # Path to file
+            audio_path = f"/Users/kristienpeeters/Desktop/audio/marker_{detected_id}.m4a"
+            
+            # Start VLC with file, quiet and no interface
+            subprocess.Popen([
+                "/Applications/VLC.app/Contents/MacOS/VLC",
+                "--intf", "dummy",  # No interface
+                "--play-and-exit",  # Play en exit
+                "--no-video",       # No video
+                audio_path
+                ])
 
     aruco.drawDetectedMarkers(frame, corners, ids)
     cv2.imshow("Aruco Detection", frame)
