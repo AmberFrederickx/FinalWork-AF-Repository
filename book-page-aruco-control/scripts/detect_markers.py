@@ -2,6 +2,10 @@ import cv2
 import json
 import time
 import sys
+from pythonosc import udp_client
+
+client = udp_client.SimpleUDPClient("127.0.0.1", 5005)
+
 
 # Check for aruco availability
 if not hasattr(cv2, 'aruco'):
@@ -45,6 +49,7 @@ while True:
         detected_id = id_list[0]  # Simplified: just use first detected marker
 
         if detected_id != last_id:
+            client.send_message("/marker_id", detected_id)
             print(f"Detected marker: {detected_id}")
             last_id = detected_id
 
