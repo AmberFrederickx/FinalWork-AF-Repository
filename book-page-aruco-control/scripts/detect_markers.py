@@ -57,15 +57,15 @@ while True:
             subprocess.call(["pkill", "-f", "VLC"])
             
             # Path to file
-            audio_path = f"/Users/kristienpeeters/Desktop/audio/marker_{detected_id}.m4a"
+            video_path = f"/Users/kristienpeeters/Desktop/videos/marker_{detected_id}.MOV"
             
             # Start VLC with file, quiet and no interface
             subprocess.Popen([
                 "/Applications/VLC.app/Contents/MacOS/VLC",
-                "--intf", "dummy",  # No interface
+                #"--intf", "dummy",  # No interface
                 "--play-and-exit",  # Play en exit
-                "--no-video",       # No video
-                audio_path
+                #"--no-video",       # No video
+                video_path
                 ])
 
     aruco.drawDetectedMarkers(frame, corners, ids)
