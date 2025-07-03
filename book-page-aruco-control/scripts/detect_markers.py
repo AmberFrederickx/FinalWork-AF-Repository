@@ -64,6 +64,10 @@ while True:
                 "/Applications/VLC.app/Contents/MacOS/VLC",
                 "--play-and-exit",  # Play en exit
                 "--fullscreen",
+                "--no-video-title-show",    # Verberg titel-overlay
+                "--no-embedded-video",      # Zorgt dat video los opent (geen venster)
+                "--video-x=1920",           # Zet video op tweede scherm (x-coördinaat)
+                "--video-y=0",              # y-coördinaat
                 video_path
                 ])
 
