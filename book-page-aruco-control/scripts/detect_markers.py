@@ -62,9 +62,8 @@ while True:
             # Start VLC with file, quiet and no interface
             subprocess.Popen([
                 "/Applications/VLC.app/Contents/MacOS/VLC",
-                #"--intf", "dummy",  # No interface
                 "--play-and-exit",  # Play en exit
-                #"--no-video",       # No video
+                "--fullscreen",
                 video_path
                 ])
 
