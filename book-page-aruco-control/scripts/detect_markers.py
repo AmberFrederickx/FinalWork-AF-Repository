@@ -18,7 +18,7 @@ dictionary_id = aruco.DICT_6X6_250
 aruco_dict = aruco.getPredefinedDictionary(dictionary_id)
 parameters = aruco.DetectorParameters_create()
 for i in range(3):
-    cap = cv2.VideoCapture(i)
+    cap = cv2.VideoCapture(2)
     if cap.isOpened():
         print(f"Webcam gevonden op index {i}")
         break
@@ -57,7 +57,7 @@ while True:
             subprocess.call(["pkill", "-f", "VLC"])
             
             # Path to file
-            video_path = f"/Users/kristienpeeters/Desktop/videos/marker_{detected_id}.MOV"
+            video_path = f"/Users/kristienpeeters/Desktop/videos/marker_{detected_id}.mp4"
             
             # Start VLC with file, quiet and no interface
             subprocess.Popen([
